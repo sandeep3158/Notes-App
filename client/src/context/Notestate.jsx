@@ -1,7 +1,7 @@
 import { useState } from "react";
 import NoteContext from "./noteContext";
 import { v4 as uuidv4 } from "uuid"; 
-const host = "http://localhost:8000";
+const host = "https://noteapp-chdv.onrender.com";
 const authToken = localStorage.getItem('token');
 const NoteState = (props) => {
   const notesInitial = [];
