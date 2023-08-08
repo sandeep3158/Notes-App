@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React,{ useState } from "react";
 import NoteContext from "./noteContext";
 import { v4 as uuidv4 } from "uuid"; 
 const host = "https://noteapp-chdv.onrender.com";
