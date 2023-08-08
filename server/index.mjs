@@ -10,7 +10,7 @@ connectToMongo();
 
 // Create Express app
 const app = express();
-const port = process.env.PORT || 8000;
+const port =  80;
 const host = process.env.BASE_URL;
 // Enable CORS
 app.use(cors());
@@ -26,5 +26,5 @@ app.use('/api/notes', notesRoutes);
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Example app listening at ${host}${port}`);
+  console.log(`Example app listening at ${host}`);
 });
