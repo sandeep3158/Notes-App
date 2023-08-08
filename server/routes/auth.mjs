@@ -6,8 +6,7 @@ import jwt from "jsonwebtoken";
 import fetchUser from '../middleware/fetchUser.mjs'; // Assuming the fetchUser middleware is defined in a file named "fetchUser.mjs"
 
 const router = express.Router();
-const secret_key = "alpha";
-
+const secret_key = process.env.Secret_key;
 // Route 1: Create a User using POST /api/auth/createuser (No Login required)
 router.post(
   "/createuser",
