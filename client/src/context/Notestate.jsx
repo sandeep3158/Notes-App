@@ -15,6 +15,10 @@ const NoteState = (props) => {
         headers: {
           'Content-Type': 'application/json',
           "auth-token": authToken,
+            // Add cache control headers to prevent caching
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
         }
       });
       const json =  await response.json();
