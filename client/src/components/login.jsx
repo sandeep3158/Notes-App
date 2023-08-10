@@ -24,6 +24,7 @@ const Login = (props) => {
       console.log(json)
     if (json.success) {
       // Redirect
+         sessionStorage.clear()  
       localStorage.setItem("token", json.authToken);
 
       history('/');
