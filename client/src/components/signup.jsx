@@ -1,90 +1,71 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import noteContext from "../context/noteContext"
-import NoteItem from './NoteItem';
-import AddNote from './addnote';
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-const Notes = (props) => {
-    const context = useContext(noteContext);
-    const { notes, getNotes, editNote } = context;
-    let history = useNavigate()
-    useEffect(() => {
-        if (localStorage.getItem('token')) {
-            getNotes();
-        }
-        else {
-            history('/login')
-        }
-        // eslint-disable-next-line
-    }, [])
-    const ref = useRef(null)
-    const refClose = useRef(null)
-    const [note, setNote] = useState({ id: "", etitle: "", edescription: "", etag: "" })
+const host = 'https://noteapp-chdv.onrender.com';
 
-    const updateNote = (currentNote) => {
-        ref.current.click();
-        setNote({ id: currentNote._id, etitle: currentNote.title, edescription: currentNote.description, etag: currentNote.tag })
+const signup = (props) => {
+  const [credentials, setCredentials] = useState({ name: '', email: '', password: '', cpassword: '' });
+  const history = useNavigate(); 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    e.persist(); // Persist the event to use it in the asynchronous function.
+    const { name, email, password, cpassword } = credentials; // Destructure the values
+  
+    // Compare password and confirm password
+    if (password !== cpassword) {
+        props.showAlert('Passwords do not match', 'danger');
+        return; // Prevent further execution
     }
+    
+    const response = await fetch(`${host}/api/auth/createuser`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
 
-    const handleClick = (e) => {
-        editNote(note.id, note.etitle, note.edescription, note.etag)
-        refClose.current.click();
-        props.showAlert('Updated Successfully', 'success')
+    const json = await response.json();
+    if (json.success) {
+      // Redirect
+      localStorage.setItem('token', json.authToken);  
+      history('/');
+      props.showAlert('Account Created Successfully','success')
     }
-
-    const onChange = (e) => {
-        setNote({ ...note, [e.target.name]: e.target.value })
+    else{
+      props.showAlert('Invalid Credientals','danger')
     }
+  };
 
-    return (
-        <>
-            <AddNote showAlert={props.showAlert} />
-            <button ref={ref} type="button" className="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Launch demo modal
-            </button>
-            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Edit Note</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <form className="my-3">
-                                <div className="mb-3">
-                                    <label htmlFor="title" className="form-label">Title</label>
-                                    <input type="text" className="form-control" id="etitle" name="etitle" value={note.etitle} aria-describedby="emailHelp" onChange={onChange} minLength={5} required />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="description" className="form-label">Description</label>
-                                    <textarea type="text" className="form-control" id="edescription" name="edescription" value={note.edescription} onChange={onChange} minLength={5} required />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="tag" className="form-label">Tag</label>
-                                    <input type="text" className="form-control" id="etag" name="etag" value={note.etag} onChange={onChange}
-                                    />
-                                </div>
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials((credentials) => ({ ...credentials, [name]: value }));
+  };
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <h2>Join NoteApp Today – Create Your Account</h2>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">Name</label>
+          <input type="text" className="form-control" id="name" name='name' onChange={onChange} required minLength={3}/>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">Email</label>
+          <input type="email" className="form-control" id="email" name='email' onChange={onChange} aria-describedby="emailHelp" required />
+          <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
+        </div>
 
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button ref={refClose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button disabled={note.etitle.length < 5 || note.edescription.length < 5} onClick={handleClick} type="button" className="btn btn-primary">Update Note</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="row my-3">
-                <h2>You Notes</h2>
-                <div className="container mx-2">
-                    {notes.length === 0 && 'No notes to display'}
-                </div>
-                {Array.isArray(notes) && notes.map((note) => (
-                    <NoteItem key={note._id} updateNote={updateNote} showAlert={props.showAlert} note={note} />
-                ))}
-            </div>
-        </>
-    )
+        <div className="mb-3">
+          <label htmlFor="password" className="form-label">Password</label>
+          <input type="password" className="form-control" id="password" name='password' onChange={onChange}  minLength={3} required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="cpassword" className="form-label">Confirm Password</label>
+          <input type="password" className="form-control" id="cpassword" name='cpassword' onChange={onChange}  minLength={3} required  />
+        </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  )
 }
 
-export default Notes
+export default signup
