@@ -24,10 +24,10 @@ const Login = (props) => {
       console.log(json)
     if (json.success) {
       // Redirect
-         sessionStorage.clear()  
       localStorage.setItem("token", json.authToken);
 
       history('/');
+         sessionStorage.clear()  
       props.showAlert('Logged in Successfully','success')
     } else {
      props.showAlert('Invalid crediental','danger')
