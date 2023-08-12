@@ -10,8 +10,8 @@ const Login = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    e.persist(); // Persist the event to use it in the asynchronous function.
-
+    e.persist();
+  
     const response = await fetch(`${host}/api/auth/login`, {
       method: 'POST',
       headers: {
@@ -19,20 +19,20 @@ const Login = (props) => {
       },
       body: JSON.stringify({ email: credentials.email, password: credentials.password }),
     });
-
+  
     const json = await response.json();
-      console.log(json)
+    console.log(json);
+  
     if (json.success) {
-      // Redirect
       localStorage.setItem("token", json.authToken);
-
+      props.showAlert('Logged in Successfully', 'success');
       history('/');
-         sessionStorage.clear()  
-      props.showAlert('Logged in Successfully','success')
+      window.location.reload(); // Reload the page after successful login
     } else {
-     props.showAlert('Invalid crediental','danger')
+      props.showAlert('Invalid credentials', 'danger');
     }
   };
+  
 
   const onChange = (e) => {
     const { name, value } = e.target;
