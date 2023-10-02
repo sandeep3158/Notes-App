@@ -39,7 +39,7 @@ const Notes = (props) => {
         setPageCount(pagedatacount);
 
         if (page) {
-            const LIMIT = 5;
+            const LIMIT = 4;
             const skip = LIMIT * page // 5 *2 = 10
             const dataskip = notes.slice(page === 1 ? 0 : skip - LIMIT, skip);
             setPageData(dataskip)
@@ -179,7 +179,7 @@ const Notes = (props) => {
                             <li className={`page-item ${page === 1 && 'disabled'}`}>
                                 <button className="page-link" onClick={handlePrevios} disabled={page === 1}>Previous</button>
                             </li>
-                            <div className=" mx-2 text-xl-center">{page}</div>
+                              <li class="page-item">{page} </li>
                             <li className={`page-item ${page === pageCount && 'disabled'}`}>
 
                                 <button className="page-link" onClick={handleNext} disabled={page === pageCount}>Next</button>
