@@ -179,7 +179,7 @@ const Notes = (props) => {
                             <li className={`page-item ${page === 1 && 'disabled'}`}>
                                 <button className="page-link" onClick={handlePrevios} disabled={page === 1}>Previous</button>
                             </li>
-                              <li class="page-item">{page} </li>
+                          <li class="page-item page-link">{page}</li>
                             <li className={`page-item ${page === pageCount && 'disabled'}`}>
 
                                 <button className="page-link" onClick={handleNext} disabled={page === pageCount}>Next</button>
