@@ -1,4 +1,3 @@
-// src/Login.jsx
 import React, { useState } from 'react';
 import  {useNavigate}  from 'react-router-dom';
 
@@ -21,19 +20,16 @@ const Login = (props) => {
     });
   
     const json = await response.json();
-    console.log(json);
   
     if (json.success) {
       localStorage.setItem("token", json.authToken);
       props.showAlert('Logged in Successfully', 'success');
       history('/');
-      window.location.reload(); // Reload the page after successful login
     } else {
       props.showAlert('Invalid credentials', 'danger');
     }
   };
   
-
   const onChange = (e) => {
     const { name, value } = e.target;
     setCredentials((credentials) => ({ ...credentials, [name]: value }));

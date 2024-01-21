@@ -3,7 +3,7 @@ import noteContext from '../context/noteContext';
 
 const AddNote = (props) => {
   const context = useContext(noteContext);
-  const { addNote } = context;
+  const { addNote, getNotes } = context;
 
   const [note, setNote] = useState({
     title: '',
@@ -11,7 +11,7 @@ const AddNote = (props) => {
     tag: '',
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (note.title.length < 3 || note.description.length < 5) {
@@ -19,7 +19,9 @@ const AddNote = (props) => {
       return;
     }
 
-    addNote(note.title, note.description, note.tag);
+    await addNote(note.title, note.description, note.tag);
+    await getNotes();
+    
     props.showAlert('Note Added Successfully', 'success');
     setNote({
       title: '',

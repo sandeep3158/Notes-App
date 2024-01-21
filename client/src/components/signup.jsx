@@ -30,7 +30,6 @@ const signup = (props) => {
       localStorage.setItem('token', json.authToken);  
       props.showAlert('Account Created Successfully','success')
       history('/');
-      window.location.reload();
     }
     else{
       props.showAlert('Invalid Credientals','danger')
@@ -69,4 +68,4 @@ const signup = (props) => {
   )
 }
 
-export default signup
+export default signup;

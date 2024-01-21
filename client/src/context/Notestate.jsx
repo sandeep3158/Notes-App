@@ -1,50 +1,41 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import NoteContext from "./noteContext";
-import { v4 as uuidv4 } from "uuid"; 
 const host = 'https://noteapp-chdv.onrender.com';
 
 const authToken = localStorage.getItem('token');
+
 const NoteState = (props) => {
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial);
   const getNotes = async () => {
     try {
-      const response = await fetch(`${host}/api/notes/fetchallnotes`, {
-        method: 'GET',
+      const response = await axios.get(`${host}/api/notes/fetchallnotes`, {
         headers: {
           'Content-Type': 'application/json',
-          "auth-token": authToken,
-            // Add cache control headers to prevent caching
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
+          'auth-token': authToken,
         }
       });
-      const json =  await response.json()
-      setNotes(json);
+      setNotes(response.data);
     } catch (error) {
       console.error("Error fetching notes:", error);
     }
   };
- 
 
   const addNote = async (title, description, tag) => {
     try {
-      const response = await fetch(`${host}/api/notes/addnotes`, {
-        method: 'POST',
+      const response = await axios.post(`${host}/api/notes/addnotes`, {
+        title,
+        description,
+        tag,
+      }, {
         headers: {
           'Content-Type': 'application/json',
-          "auth-token": authToken,
+          'auth-token': authToken,
         },
-        body: JSON.stringify({ title, description, tag})
-      })
-      const note = {
-        "_id": uuidv4(),
-        "title": title,
-        "description": description,
-        "tag": tag,
-      };
-      setNotes([...notes, note]);
+      });
+    
+      setNotes([...notes, await response.data]);
     } catch (error) {
       console.error("Error adding a note:", error);
     }
@@ -52,11 +43,10 @@ const NoteState = (props) => {
 
   const deleteNote = async (id) => {
     try {
-      await fetch(`${host}/api/notes/deletenote/${id}`, {
-        method: 'DELETE',
+      await axios.delete(`${host}/api/notes/deletenote/${id}`, {
         headers: {
           'Content-Type': 'application/json',
-          "auth-token":authToken,
+          "auth-token": authToken,
         }
       });
       const newNotes = notes.filter((note) => note._id !== id);
@@ -68,24 +58,28 @@ const NoteState = (props) => {
 
   const editNote = async (id, title, description, tag) => {
     try {
-      await fetch(`${host}/api/notes/updatenote/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          "auth-token": authToken,
+      await axios.put(
+        `${host}/api/notes/updatenote/${id}`,
+        { 
+          title,
+          description,
+          tag
         },
-        body: JSON.stringify({ title, description, tag })
-      });
-
-      setNotes((prevNotes) => {
-        return prevNotes.map((note) => {
-          if (note._id === id) {
-            return { ...note, title, description, tag };
-          } else {
-            return note;
-          }
-        });
-      });
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'auth-token': authToken,
+          },
+        }
+      );
+  
+      setNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note._id === id
+            ? { ...note, title, description, tag }
+            : note
+        )
+      );
     } catch (error) {
       console.error("Error editing a note:", error);
     }
